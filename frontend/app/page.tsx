@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
+import WeatherWidget from '../components/WeatherWidget';
 import { products } from '../data/products';
 
 export default function Home() {
@@ -35,13 +37,27 @@ export default function Home() {
       </header>
 
       {/* Sub-header (A barra cinza escuro abaixo do header principal) */}
-      <nav className="bg-[#232f3e] text-white p-2 text-sm flex gap-4 overflow-x-auto">
+      <nav className="bg-[#232f3e] text-white p-2 text-sm flex gap-4 overflow-x-auto items-center">
         <span className="cursor-pointer hover:border-white border border-transparent p-1">Todas as categorias</span>
         <span className="cursor-pointer hover:border-white border border-transparent p-1">Capacetes</span>
         <span className="cursor-pointer hover:border-white border border-transparent p-1">Luvas</span>
         <span className="cursor-pointer hover:border-white border border-transparent p-1">Calçados de Segurança</span>
+        
+        {/* Link para a página do Blog */}
+        <Link href="/blog" className="font-bold text-[#febd69] hover:border-white border border-transparent p-1">
+          Blog AMEPI
+        </Link>
+
+        {/* Link para a Calculadora de Validade (Proposta Personalizada) */}
+        <Link href="/calculadora" className="font-bold text-blue-300 hover:border-white border border-transparent p-1">
+          Calculadora de Validade
+        </Link>
+        
         <span className="cursor-pointer hover:border-white border border-transparent p-1">Ofertas do Dia</span>
       </nav>
+
+      {/* Widget de Clima adicionado aqui! */}
+      <WeatherWidget />
 
       {/* Catálogo de Produtos (A Grade) */}
       <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8">
