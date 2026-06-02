@@ -2,10 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { products } from '../../../data/products';
 
-// 1. O 'async' foi adicionado aqui na função principal
 export default async function ProdutoPage({ params }: { params: Promise<{ id: string }> }) {
   
-  // 2. O 'await' resolve o erro do Next.js extraindo o ID corretamente
+  // Aguarda a resolução dos parâmetros exigida pelo Next.js moderno
   const resolvedParams = await params;
   const product = products.find(p => p.id === parseInt(resolvedParams.id));
 
@@ -16,123 +15,115 @@ export default async function ProdutoPage({ params }: { params: Promise<{ id: st
   const discount = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 antialiased font-sans pb-24">
       
-      {/* Header Simplificado */}
-      <header className="bg-[#131921] text-white p-4 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center">
-          <Link href="/" className="text-sm font-medium hover:text-orange-400 transition-colors flex items-center gap-2">
-            <span>&larr;</span> Voltar para o Catálogo AMEPI
+      {/* Header Técnico Reduzido */}
+      <header className="bg-[#0f172a] text-white p-4 shadow-md border-b border-slate-800">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <Link href="/" className="text-xs font-bold text-slate-300 hover:text-orange-400 transition-colors uppercase tracking-wider flex items-center gap-2">
+            <span>&larr;</span> Voltar ao Painel Geral AMEPI
           </Link>
+          <div className="bg-orange-500 text-slate-950 px-2 py-0.5 rounded text-[10px] font-black uppercase">
+            Ficha Técnica Digital
+          </div>
         </div>
       </header>
 
-      {/* Breadcrumb */}
-      <div className="text-xs text-gray-500 py-4 px-6 max-w-7xl mx-auto font-medium tracking-wide">
-        EPIs <span className="mx-2">&gt;</span> <span className="text-blue-600 cursor-pointer hover:underline">{product.brand}</span> <span className="mx-2">&gt;</span> {product.name}
+      {/* Breadcrumb Técnico */}
+      <div className="text-[11px] text-slate-500 py-4 px-6 max-w-7xl mx-auto font-bold uppercase tracking-wider">
+        Central de Suprimentos <span className="mx-2 text-slate-300">&gt;</span> <span className="text-orange-600">{product.brand}</span> <span className="mx-2 text-slate-300">&gt;</span> {product.name}
       </div>
 
-      {/* Container Principal */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row gap-8 mt-4">
+      {/* Painel do Equipamento */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-10 mt-2">
         
-        {/* Coluna da Esquerda: Imagem com visual Premium */}
-        <div className="w-full md:w-5/12 flex flex-col items-center">
-          <div className="bg-white border border-gray-100 shadow-xl shadow-gray-200/50 p-8 rounded-2xl flex justify-center w-full transition-transform hover:scale-[1.02] duration-300">
+        {/* Mostruário de Imagem Industrial */}
+        <div className="w-full lg:w-5/12 flex flex-col">
+          <div className="bg-white border border-slate-100 shadow-xl shadow-slate-200/50 p-8 rounded-3xl flex justify-center items-center w-full min-h-[400px]">
             <img 
               src={product.image} 
               alt={product.name} 
-              className="max-h-[450px] w-full object-cover rounded-xl"
+              className="max-h-[380px] object-contain"
             />
           </div>
-          <div className="flex gap-4 w-full justify-center mt-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border-2 border-transparent hover:border-orange-500 rounded-lg p-1 cursor-pointer transition-all shadow-sm">
-                <img src={product.image} className="h-16 w-16 object-cover rounded-md opacity-80 hover:opacity-100" alt="thumbnail" />
-              </div>
-            ))}
+          
+          {/* Tags de Normas */}
+          <div className="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div className="bg-slate-100 rounded-xl p-2 border border-slate-200"><p className="text-[10px] text-slate-500 font-bold uppercase">MTE</p><p className="text-xs font-black text-slate-700">Conforme</p></div>
+            <div className="bg-slate-100 rounded-xl p-2 border border-slate-200"><p className="text-[10px] text-slate-500 font-bold uppercase">Laudo</p><p className="text-xs font-black text-green-600">Aprovado</p></div>
+            <div className="bg-slate-100 rounded-xl p-2 border border-slate-200"><p className="text-[10px] text-slate-500 font-bold uppercase">Qualidade</p><p className="text-xs font-black text-slate-700">ISO 9001</p></div>
           </div>
         </div>
 
-        {/* Coluna Central/Direita */}
-        <div className="w-full md:w-7/12 flex flex-col lg:flex-row gap-8">
+        {/* Informações de Engenharia e Preços */}
+        <div className="w-full lg:w-7/12 flex flex-col md:flex-row gap-8">
           
           <div className="flex-1">
-            <h1 className="text-3xl font-bold leading-tight mb-2 text-gray-900 tracking-tight">
+            <span className="text-xs font-black text-orange-600 uppercase tracking-widest">{product.brand} Industrial</span>
+            <h1 className="text-2xl md:text-3xl font-black leading-tight mt-1 mb-4 text-slate-950 tracking-tight">
               {product.name}
             </h1>
-            <p className="text-sm text-blue-600 hover:underline cursor-pointer mb-4 font-medium">
-              Visite a loja oficial {product.brand}
-            </p>
             
-            <div className="flex items-center gap-4 mt-2 border-b border-gray-200 pb-4">
-              <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium">
-                <span>{product.rating.toString().replace('.', ',')}</span>
-                <span className="text-yellow-500 drop-shadow-sm">★★★★★</span>
-                <span className="text-blue-600 ml-2">{product.reviews} avaliações</span>
-              </div>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 uppercase tracking-wider">
+                🛡 Certificado CA Ativo
+              </span>
+              <span className="text-xs text-slate-400 font-medium">| {product.reviews} testes de impacto estrutural</span>
             </div>
 
-            <div className="mt-6 bg-gradient-to-r from-red-50 to-transparent p-4 rounded-xl border-l-4 border-[#cc0c39]">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl text-[#cc0c39] font-light">-{discount}%</span>
-                <div className="text-4xl text-gray-900 font-bold flex items-start tracking-tighter">
-                  <span className="text-lg mt-1 mr-1 font-medium">R$</span>
-                  {Math.floor(product.price)}
-                  <span className="text-lg mt-1 font-medium">
-                    {(product.price % 1).toFixed(2).substring(2)}
-                  </span>
+            {/* Bloco de Preço Técnico */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-6">
+              <div className="text-[11px] font-bold text-slate-400 uppercase mb-1">Valor Unitário Corporativo</div>
+              <div className="flex items-baseline gap-3">
+                <div className="text-4xl font-black text-slate-900 tracking-tight flex items-start">
+                  <span className="text-lg font-bold mt-1 mr-1 text-slate-400">R$</span>
+                  {product.price.toFixed(2).replace('.', ',')}
                 </div>
+                <div className="text-sm text-slate-400 line-through">
+                  Regulado: R$ {product.oldPrice.toFixed(2).replace('.', ',')}
+                </div>
+                <span className="bg-red-50 text-red-700 font-bold text-xs px-2 py-0.5 rounded border border-red-100">-{discount}% OFF</span>
               </div>
-              <div className="text-sm text-gray-500 mt-2 font-medium">
-                Preço anterior: <span className="line-through">R$ {product.oldPrice.toFixed(2).replace('.', ',')}</span>
-              </div>
+              <p className="text-[11px] text-slate-400 mt-2">*Faturamento facilitado via CNPJ disponível no fechamento.</p>
             </div>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-                <span className="w-1 h-6 bg-blue-600 rounded-full"></span> Sobre este produto
+            {/* Ficha Técnica Detalhada */}
+            <div className="mt-6">
+              <h2 className="text-sm font-black uppercase tracking-wider text-slate-800 mb-3 flex items-center gap-2">
+                <span className="w-1.5 h-4 bg-orange-500 rounded-sm"></span> Memorial de Especificações
               </h2>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <p className="text-gray-700 leading-relaxed mb-4">
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   {product.description}
                 </p>
-                <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2 font-medium">
-                  <li>Produto certificado com CA (Certificado de Aprovação) válido.</li>
-                  <li>Alta durabilidade e resistência testada rigorosamente.</li>
-                  <li>Design ergonômico focado no conforto prolongado.</li>
-                </ul>
+                <div className="border-t border-slate-100 pt-4 space-y-2">
+                  <div className="flex justify-between text-xs py-1 border-b border-slate-50"><span className="font-bold text-slate-500">Fabricante</span> <span className="font-bold text-slate-800">{product.brand}</span></div>
+                  <div className="flex justify-between text-xs py-1 border-b border-slate-50"><span className="font-bold text-slate-500">Normativa Principal</span> <span className="font-bold text-slate-800">NR-6 / Portaria MTE</span></div>
+                  <div className="flex justify-between text-xs py-1"><span className="font-bold text-slate-500">Ciclo de Vida Útil</span> <span className="font-bold text-slate-800">Elevado / Longa Duração</span></div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Buy Box Elegante */}
-          <div className="w-full lg:w-[300px]">
-            <div className="bg-white border border-gray-200 shadow-2xl shadow-gray-200/50 rounded-2xl p-6 sticky top-6">
-              <div className="text-2xl text-gray-900 font-bold flex items-start mb-4">
-                <span className="text-base mt-1 mr-1">R$</span>
-                {product.price.toFixed(2).replace('.', ',')}
-              </div>
-              
-              <div className="text-sm text-gray-700 mb-6 bg-green-50 p-3 rounded-lg border border-green-100">
-                Entrega <span className="font-bold text-green-700">GRÁTIS</span> para o Brasil. Detalhes
-              </div>
-              
-              <div className="text-lg text-green-600 font-bold mb-6 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Em estoque
+          {/* Buy Box Comercial Lateral */}
+          <div className="w-full md:w-[280px] shrink-0">
+            <div className="bg-slate-900 text-white rounded-2xl p-6 sticky top-24 border border-slate-800 shadow-2xl">
+              <div className="text-xs font-bold text-slate-400 uppercase mb-2">Disponibilidade Logística</div>
+              <div className="text-green-400 font-bold text-sm mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Prontidão de Estoque
               </div>
 
-              <button className="w-full bg-gradient-to-b from-[#ffd814] to-[#f7ca00] hover:from-[#f7ca00] hover:to-[#e5bc00] text-gray-900 font-bold py-3 rounded-xl mb-3 shadow-sm border border-[#fcd200] transition-all hover:shadow-md active:scale-95">
-                Adicionar ao carrinho
-              </button>
-              <button className="w-full bg-gradient-to-b from-[#ffa41c] to-[#fa8900] hover:from-[#fa8900] hover:to-[#e07b00] text-white font-bold py-3 rounded-xl mb-6 shadow-sm border border-[#ff8f00] transition-all hover:shadow-md active:scale-95">
-                Comprar agora
-              </button>
-
-              <div className="text-xs text-gray-500 space-y-2 bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between"><span>Vendido por</span> <span className="font-bold text-gray-700">AMEPI Oficial</span></div>
-                <div className="flex justify-between"><span>Envio</span> <span className="font-bold text-gray-700">Transportadora AMEPI</span></div>
-                <div className="flex justify-between"><span>Garantia</span> <span className="text-blue-600 font-medium">90 dias pela fábrica</span></div>
+              <div className="text-xs text-slate-300 space-y-3 mb-6 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p>🚚 **Despacho imediato** para canteiros de obras e galpões.</p>
+                <p>🛡 **Seguro total** contra avarias logísticas incluso.</p>
               </div>
+
+              <button className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-slate-950 font-black py-3 rounded-xl mb-3 text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20">
+                Adicionar ao Lote
+              </button>
+              <button className="w-full bg-transparent hover:bg-slate-800 text-slate-300 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all border border-slate-700">
+                Faturar Agora
+              </button>
             </div>
           </div>
 

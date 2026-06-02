@@ -2,44 +2,54 @@ import Link from 'next/link';
 
 export default function ProductCard({ product }: { product: any }) {
   return (
-    <div className="group bg-white border border-gray-100 rounded-2xl p-5 flex flex-col h-full hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+    <div className="group bg-white border border-slate-100 rounded-2xl p-5 flex flex-col h-full hover:shadow-xl hover:shadow-slate-200/80 hover:-translate-y-1 transition-all duration-300 relative">
       
-      {/* Badge de Desconto Dinâmico (Design Premium) */}
-      <div className="absolute top-4 left-4 bg-[#cc0c39] text-white text-xs font-bold px-2 py-1 rounded shadow-sm z-10">
-        -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+      {/* Badge Técnico de Desconto */}
+      <div className="absolute top-4 left-4 bg-slate-900 text-orange-400 text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm z-10 border border-slate-800 tracking-wide uppercase">
+        -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% REF
       </div>
 
-      <Link href={`/produto/${product.id}`} className="flex justify-center mb-5 relative overflow-hidden rounded-xl">
-        {/* Efeito de zoom suave na imagem ao passar o mouse */}
+      <Link href={`/produto/${product.id}`} className="flex justify-center mb-4 relative overflow-hidden rounded-xl bg-slate-50 p-4 h-48 items-center">
         <img 
           src={product.image} 
           alt={product.name} 
-          className="h-48 w-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-xl"
+          className="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
         />
       </Link>
       
-      <Link href={`/produto/${product.id}`}>
-        <h3 className="text-sm text-gray-800 font-bold hover:text-orange-500 line-clamp-2 mb-2 transition-colors">
+      <div className="mb-1 text-[11px] font-bold text-orange-600 uppercase tracking-widest">
+        {product.brand}
+      </div>
+
+      <Link href={`/produto/${product.id}`} className="flex-1">
+        <h3 className="text-sm text-slate-800 font-bold hover:text-orange-600 line-clamp-2 mb-2 transition-colors leading-snug">
           {product.name}
         </h3>
       </Link>
 
-      <div className="flex items-center gap-1 mb-3 bg-gray-50 w-fit px-2 py-1 rounded-md">
-        <span className="text-yellow-500 text-sm drop-shadow-sm">★★★★★</span>
-        <span className="text-blue-500 text-xs font-medium hover:underline cursor-pointer ml-1">{product.reviews} avaliações</span>
+      {/* Avaliações Técnicas */}
+      <div className="flex items-center gap-1 mb-4 bg-slate-50 w-fit px-2 py-1 rounded-md border border-slate-100">
+        <span className="text-amber-500 text-xs">★</span>
+        <span className="text-slate-700 text-xs font-bold">{product.rating}</span>
+        <span className="text-slate-400 text-[11px] ml-1">({product.reviews} laudos)</span>
       </div>
 
-      <div className="mt-auto pt-4 border-t border-gray-100">
-        <div className="text-2xl text-gray-900 font-bold mb-4 flex items-start">
-          <span className="text-xs font-medium mt-1 mr-1">R$</span>
-          {product.price.toFixed(2).replace('.', ',')}
+      <div className="pt-3 border-t border-slate-100 mt-auto">
+        <div className="flex items-baseline gap-2 mb-3">
+          <div className="text-2xl text-slate-900 font-black tracking-tight flex items-start">
+            <span className="text-xs font-bold mt-1 mr-0.5 text-slate-500">R$</span>
+            {product.price.toFixed(2).replace('.', ',')}
+          </div>
+          <div className="text-xs text-slate-400 line-through">
+            R$ {product.oldPrice.toFixed(2).replace('.', ',')}
+          </div>
         </div>
         
         <Link 
           href={`/produto/${product.id}`}
-          className="block w-full text-center bg-gradient-to-r from-gray-900 to-gray-800 hover:from-orange-500 hover:to-orange-400 text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-all duration-300 hover:shadow-lg active:scale-95"
+          className="block w-full text-center bg-slate-900 group-hover:bg-orange-500 text-white group-hover:text-slate-950 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-wider shadow-sm"
         >
-          Ver Detalhes
+          Analisar Especificações
         </Link>
       </div>
     </div>
