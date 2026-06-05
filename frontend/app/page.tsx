@@ -46,9 +46,9 @@ export default function Home() {
             <Link href="/blog" className="text-slate-300 hover:text-orange-400 transition-colors">
               Informativo Técnico
             </Link>
-            <div className="bg-slate-800 hover:bg-slate-700 transition-colors px-4 py-2 rounded-xl cursor-pointer flex items-center gap-2 border border-slate-700">
-              <span>🛒</span> <span>Orçamento</span>
-            </div>
+            <Link href="/carrinho" className="bg-orange-500 hover:bg-orange-600 text-slate-950 transition-colors px-4 py-2 rounded-xl cursor-pointer flex items-center gap-2 font-black shadow-lg shadow-orange-500/20">
+              <span>🛒</span> <span>Ver Lote</span>
+            </Link>
           </div>
         </div>
       </header>
@@ -67,7 +67,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Seção Hero - O Visual de Empresa Grande */}
+      {/* Seção Hero */}
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white py-16 px-4 overflow-hidden border-b-4 border-orange-500">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#f97316_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
@@ -94,7 +94,6 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex justify-center">
-            {/* Elemento gráfico abstrato industrial simulando tecnologia */}
             <div className="w-72 h-72 rounded-3xl bg-gradient-to-tr from-orange-500 to-amber-300 opacity-20 blur-3xl absolute"></div>
             <div className="border border-slate-700/60 p-8 rounded-2xl bg-slate-900/50 backdrop-blur-sm relative border-l-orange-500/40 border-l-2">
               <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Informativo Climatológico</p>

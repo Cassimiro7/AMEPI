@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { products } from '../../../data/products';
+import BuyBoxButtons from '../../../components/BuyBoxButtons';
 
 export default async function ProdutoPage({ params }: { params: Promise<{ id: string }> }) {
   
-  // Aguarda a resolução dos parâmetros exigida pelo Next.js moderno
   const resolvedParams = await params;
   const product = products.find(p => p.id === parseInt(resolvedParams.id));
 
@@ -23,8 +23,14 @@ export default async function ProdutoPage({ params }: { params: Promise<{ id: st
           <Link href="/" className="text-xs font-bold text-slate-300 hover:text-orange-400 transition-colors uppercase tracking-wider flex items-center gap-2">
             <span>&larr;</span> Voltar ao Painel Geral AMEPI
           </Link>
-          <div className="bg-orange-500 text-slate-950 px-2 py-0.5 rounded text-[10px] font-black uppercase">
-            Ficha Técnica Digital
+          
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-black uppercase border border-slate-700">
+              Ficha Técnico Digital
+            </div>
+            <Link href="/carrinho" className="bg-orange-500 hover:bg-orange-600 text-slate-950 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all shadow-md flex items-center gap-2">
+              🛒 Ir para o Lote
+            </Link>
           </div>
         </div>
       </header>
@@ -118,12 +124,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ id: st
                 <p>🛡 **Seguro total** contra avarias logísticas incluso.</p>
               </div>
 
-              <button className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-slate-950 font-black py-3 rounded-xl mb-3 text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20">
-                Adicionar ao Lote
-              </button>
-              <button className="w-full bg-transparent hover:bg-slate-800 text-slate-300 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all border border-slate-700">
-                Faturar Agora
-              </button>
+              <BuyBoxButtons product={product} />
             </div>
           </div>
 
