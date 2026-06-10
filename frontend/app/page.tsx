@@ -1,6 +1,6 @@
-'use client'; // <-- Adicionado para permitir o uso de estado e interatividade
+'use client'; 
 
-import { useState } from 'react'; // <-- Importando o hook useState
+import { useState } from 'react';
 import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 import WeatherWidget from '../components/WeatherWidget';
@@ -8,13 +8,23 @@ import AuthButton from '../components/AuthButton';
 import { products } from '../data/products';
 
 export default function Home() {
-  // Estado para armazenar o texto digitado no input
-  const [searchTerm, setSearchTerm] = useState('');
+  // 1. Guarda o que você está digitando no momento
+  const [inputText, setInputText] = useState('');
+  // 2. Guarda o termo final quando você aperta Enter ou clica em Buscar
+  const [activeSearch, setActiveSearch] = useState('');
 
-  // Lógica de filtragem: verifica se o nome do produto inclui o que foi digitado
+  // 3. Função blindada contra recarregamento (sem <form>)
+  const handleSearchAction = () => {
+    console.log("🔥 BOTÃO CLICADO! Texto no input:", inputText);
+    setActiveSearch(inputText); 
+  };
+
+  // 4. O filtro agora usa o termo ativo (activeSearch)
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name.toLowerCase().includes(activeSearch.toLowerCase())
   );
+
+  
 
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 antialiased font-sans">
@@ -28,7 +38,6 @@ export default function Home() {
       <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-xl backdrop-blur-md bg-[#0f172a]/90 border-b border-slate-800">
         <div className="max-w-7xl mx-auto p-4 flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8">
           
-          {/* Logo e Slogan */}
           <div className="flex items-center gap-4 shrink-0">
             <h1 className="text-3xl font-black tracking-tighter text-white flex items-center gap-1.5 hover:scale-105 transition-transform cursor-default">
               <span className="bg-gradient-to-br from-orange-400 to-orange-600 text-slate-950 px-2.5 py-0.5 rounded-lg font-black shadow-lg shadow-orange-500/20">AM</span>
@@ -40,7 +49,7 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Barra de Pesquisa Técnica Avançada */}
+          {/* BARRA DE PESQUISA BLINDADA */}
           <div className="flex flex-1 w-full max-w-2xl group">
             <div className="relative w-full flex shadow-sm group-focus-within:shadow-orange-500/10 transition-all rounded-xl">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">🔍</span>
@@ -48,16 +57,25 @@ export default function Home() {
                 type="text" 
                 placeholder="Buscar por equipamento..." 
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-l-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 focus:bg-slate-800 transition-colors text-sm"
-                value={searchTerm} // <-- Conectado ao estado
-                onChange={(e) => setSearchTerm(e.target.value)} // <-- Atualiza o estado ao digitar
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                /* Captura a tecla Enter sem recarregar a página */
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearchAction();
+                  }
+                }}
               />
-              <button className="bg-orange-500 hover:bg-orange-400 active:scale-95 text-slate-950 font-black px-6 rounded-r-xl text-sm transition-all border border-orange-500 hover:border-orange-400">
+              <button 
+                type="button" 
+                onClick={handleSearchAction} /* O clique do mouse dispara a busca */
+                className="bg-orange-500 hover:bg-orange-400 active:scale-95 text-slate-950 font-black px-6 rounded-r-xl text-sm transition-all border border-orange-500 hover:border-orange-400"
+              >
                 Buscar
               </button>
             </div>
           </div>
 
-          {/* Ações Rápidas & Perfil */}
           <div className="flex items-center gap-4 sm:gap-6 text-sm font-semibold shrink-0">
             <Link href="/blog" className="hidden lg:block text-slate-400 hover:text-orange-400 transition-colors">
               Informativo Técnico
@@ -72,11 +90,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Sub-Navegação Técnica (mantida igual) */}
+      {/* Sub-Navegação Técnica */}
       <nav className="bg-[#1e293b] text-slate-400 border-b border-slate-700 text-xs font-bold tracking-wide uppercase shadow-sm">
-         {/* ... (código mantido) ... */}
-         <div className="max-w-7xl mx-auto px-4 py-3 flex gap-8 overflow-x-auto scrollbar-none items-center whitespace-nowrap">
-          <span className="cursor-pointer text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-8 overflow-x-auto scrollbar-none items-center whitespace-nowrap">
+          <span 
+            // Clicar aqui limpa a busca e volta a mostrar todos os itens!
+            onClick={() => { setInputText(''); setActiveSearch(''); }}
+            className="cursor-pointer text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1"
+          >
             <span className="text-base leading-none">⚡</span> Ver Todos os EPIs
           </span>
           <span className="cursor-pointer hover:text-white transition-colors">Protection Head</span>
@@ -89,10 +110,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Seção Hero (mantida igual) */}
       <section className="relative bg-gradient-to-b from-[#0f172a] to-slate-900 text-white py-20 px-4 overflow-hidden border-b-[6px] border-orange-500">
-         {/* ... (código mantido) ... */}
-         <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#f97316_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#f97316_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
           <div className="flex flex-col items-start">
@@ -133,26 +152,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Grade de Produtos */}
       <div id="catalogo" className="max-w-7xl mx-auto p-6 sm:p-8 mt-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-6 border-b-2 border-slate-200/60">
           <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-1">Equipamentos em Destaque</h2>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-1">
+              {activeSearch ? `Resultados para "${activeSearch}"` : "Equipamentos em Destaque"}
+            </h2>
             <p className="text-sm font-medium text-slate-500">Filtrados por maior índice de aprovação técnica</p>
           </div>
           <div className="bg-slate-200 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold mt-4 sm:mt-0 shadow-sm border border-slate-300">
-            {/* Atualizando a contagem para refletir a busca */}
             Mostrando {filteredProducts.length} itens encontrados
           </div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {/* Mapeando os produtos FILTRADOS em vez de todos os produtos */}
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
 
-          {/* Feedback caso a busca não encontre nada */}
           {filteredProducts.length === 0 && (
             <div className="col-span-full py-12 text-center text-slate-500">
               <p className="text-lg font-bold mb-2">Nenhum equipamento encontrado.</p>
