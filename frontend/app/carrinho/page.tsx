@@ -1,19 +1,73 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 
 export default function CarrinhoPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
 
+  // Estados para o cálculo de frete
+  const [cep, setCep] = useState('');
+  const [frete, setFrete] = useState(0);
+  const [endereco, setEndereco] = useState<string | null>(null);
+  const [loadingFrete, setLoadingFrete] = useState(false);
+  const [erroFrete, setErroFrete] = useState('');
+
+  // Cálculos financeiros
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const frete = subtotal > 0 ? 15.50 : 0;
   const total = subtotal + frete;
+
+  // Função para buscar o CEP e calcular o frete
+  const calcularFrete = async () => {
+    if (cep.replace(/\D/g, '').length !== 8) {
+      setErroFrete('Digite um CEP válido com 8 números.');
+      return;
+    }
+
+    setLoadingFrete(true);
+    setErroFrete('');
+    setEndereco(null);
+
+    try {
+      // Usando a BrasilAPI para buscar os dados reais do CEP
+      const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep.replace(/\D/g, '')}`);
+      
+      if (!response.ok) {
+        throw new Error('CEP não encontrado na base logística.');
+      }
+
+      const data = await response.json();
+      
+      // Simulação de regras de negócio B2B para o valor do frete
+      let valorSimulado = 0;
+      if (data.state === 'SP' || data.state === 'RJ' || data.state === 'MG') {
+        valorSimulado = 35.50; // Sudeste
+      } else if (data.state === 'CE' || data.state === 'PE' || data.state === 'BA') {
+        valorSimulado = 15.00; // Nordeste (Mais barato, simulando armazém local)
+      } else {
+        valorSimulado = 55.90; // Restante do Brasil
+      }
+
+      // Se o subtotal for maior que R$ 1000, frete grátis
+      if (subtotal > 1000) {
+        valorSimulado = 0;
+      }
+
+      setFrete(valorSimulado);
+      setEndereco(`${data.city} - ${data.state}`);
+      
+    } catch (error: any) {
+      setErroFrete(error.message || 'Erro ao calcular frete.');
+      setFrete(0);
+    } finally {
+      setLoadingFrete(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans pb-20">
       
-      {/* Header do Carrinho */}
       <header className="bg-[#0f172a] text-white p-6 shadow-md border-b-4 border-orange-500">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
@@ -93,6 +147,39 @@ export default function CarrinhoPage() {
               Fechamento do Lote
             </h2>
             
+            {/* Bloco de Cálculo de Frete */}
+            <div className="mb-6 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Destino Logístico (CEP)
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input 
+                  type="text" 
+                  maxLength={9}
+                  placeholder="Apenas números..." 
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500"
+                />
+                <button 
+                  onClick={calcularFrete}
+                  disabled={loadingFrete || cart.length === 0}
+                  className="bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg text-xs transition-colors"
+                >
+                  {loadingFrete ? '...' : 'OK'}
+                </button>
+              </div>
+              
+              {erroFrete && <p className="text-red-400 text-[10px] font-bold">{erroFrete}</p>}
+              
+              {endereco && !erroFrete && (
+                <div className="mt-3 text-[11px] text-slate-300 flex items-start gap-2">
+                  <span className="text-green-400">📍</span>
+                  <span>Despacho para:<br/><strong className="text-white">{endereco}</strong></span>
+                </div>
+              )}
+            </div>
+
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-slate-300 text-sm">
                 <span>Subtotal dos Equipamentos</span>
@@ -100,7 +187,13 @@ export default function CarrinhoPage() {
               </div>
               <div className="flex justify-between text-slate-300 text-sm">
                 <span>Frete Logístico</span>
-                <span className="font-bold">R$ {frete.toFixed(2).replace('.', ',')}</span>
+                <span className="font-bold">
+                  {frete === 0 && subtotal > 0 && endereco ? (
+                    <span className="text-green-400">GRÁTIS</span>
+                  ) : (
+                    `R$ ${frete.toFixed(2).replace('.', ',')}`
+                  )}
+                </span>
               </div>
             </div>
 
