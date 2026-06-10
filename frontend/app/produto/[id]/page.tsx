@@ -93,20 +93,33 @@ export default async function ProdutoPage({ params }: { params: Promise<{ id: st
               <p className="text-[11px] text-slate-400 mt-2">*Faturamento facilitado via CNPJ disponível no fechamento.</p>
             </div>
 
-            {/* Ficha Técnica Detalhada */}
-            <div className="mt-6">
+            {/* 🛡️ Ficha Técnica MTE (NOVO BLOCO DINÂMICO) */}
+            <div className="bg-slate-900 text-slate-300 p-5 rounded-2xl border border-slate-800 shadow-lg mb-6">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-3">
+                <span className="font-bold text-orange-400 uppercase tracking-wider text-xs flex items-center gap-2">
+                  <span className="text-base leading-none">🛡️</span> Ficha Técnica MTE
+                </span>
+                <span className={`px-2 py-0.5 rounded font-black text-[10px] uppercase ${product.technicalInfo.status === 'REGULAR' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {product.technicalInfo.status}
+                </span>
+              </div>
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between border-b border-slate-800/50 pb-1.5"><span className="text-slate-500">Número do CA</span> <strong className="text-white font-mono text-sm">{product.technicalInfo.caNumber}</strong></div>
+                <div className="flex justify-between border-b border-slate-800/50 pb-1.5"><span className="text-slate-500">Validade</span> <strong className="text-white">{product.technicalInfo.validity}</strong></div>
+                <div className="flex justify-between border-b border-slate-800/50 pb-1.5"><span className="text-slate-500">Normas (NR)</span> <strong className="text-white">{product.technicalInfo.nrNorm}</strong></div>
+                <div className="flex justify-between pb-1"><span className="text-slate-500">Fabricante</span> <strong className="text-white text-right max-w-[150px] sm:max-w-none truncate">{product.technicalInfo.fabricante}</strong></div>
+              </div>
+            </div>
+
+            {/* Memorial de Especificações */}
+            <div>
               <h2 className="text-sm font-black uppercase tracking-wider text-slate-800 mb-3 flex items-center gap-2">
                 <span className="w-1.5 h-4 bg-orange-500 rounded-sm"></span> Memorial de Especificações
               </h2>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <p className="text-slate-600 text-sm leading-relaxed">
                   {product.description}
                 </p>
-                <div className="border-t border-slate-100 pt-4 space-y-2">
-                  <div className="flex justify-between text-xs py-1 border-b border-slate-50"><span className="font-bold text-slate-500">Fabricante</span> <span className="font-bold text-slate-800">{product.brand}</span></div>
-                  <div className="flex justify-between text-xs py-1 border-b border-slate-50"><span className="font-bold text-slate-500">Normativa Principal</span> <span className="font-bold text-slate-800">NR-6 / Portaria MTE</span></div>
-                  <div className="flex justify-between text-xs py-1"><span className="font-bold text-slate-500">Ciclo de Vida Útil</span> <span className="font-bold text-slate-800">Elevado / Longa Duração</span></div>
-                </div>
               </div>
             </div>
           </div>

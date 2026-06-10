@@ -1,11 +1,14 @@
-import { signIn, signOut, auth } from "../auth"
+'use client';
 
-export default async function AuthButton() {
-  // O comando auth() verifica se alguém está logado neste momento
-  const session = await auth()
+import { useSession } from "next-auth/react";
+// Importamos as duas ações do nosso arquivo!
+import { logar, deslogar } from "../app/actions"; 
 
-  // SE ESTIVER LOGADO: Mostra foto, nome e botão de sair
-  if (session && session.user) {
+export default function AuthButton() {
+  const { data: session } = useSession();
+
+  // SE ESTIVER LOGADO:
+  if (session?.user) {
     return (
       <div className="flex items-center gap-3">
         <img 
@@ -18,31 +21,28 @@ export default async function AuthButton() {
           <p className="font-bold text-white leading-none">{session.user.name}</p>
         </div>
         
-        {/* Formulário obrigatório do Next.js Server Actions para deslogar */}
-        <form action={async () => {
-          "use server"
-          await signOut()
-        }}>
-          <button type="submit" className="text-xs font-bold text-slate-400 hover:text-red-400 ml-2 transition-colors">
+        <form action={deslogar}>
+          <button 
+            type="submit" 
+            className="text-xs font-bold text-slate-400 hover:text-red-400 ml-2 transition-colors cursor-pointer"
+          >
             Sair
           </button>
         </form>
       </div>
-    )
+    );
   }
 
-  // SE NÃO ESTIVER LOGADO: Mostra o botão de entrar com Google
+  // SE NÃO ESTIVER LOGADO:
   return (
-    <form action={async () => {
-      "use server"
-      await signIn("google")
-    }}>
+    // Agora o login também usa um formulário chamando o servidor!
+    <form action={logar}>
       <button 
         type="submit" 
-        className="bg-transparent hover:bg-slate-800 text-white border border-slate-600 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2"
+        className="bg-transparent hover:bg-slate-800 text-white border border-slate-600 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
       >
         <span className="text-blue-500 text-lg leading-none">G</span> Entrar
       </button>
     </form>
-  )
+  );
 }
