@@ -1,8 +1,9 @@
 'use client';
 
-import { useSession } from "next-auth/react";
-// Importamos as duas ações do nosso arquivo!
-import { logar, deslogar } from "../app/actions"; 
+// 1. Importamos o signOut diretamente do NextAuth no cliente
+import { useSession, signOut } from "next-auth/react";
+// 2. Importamos apenas o logar (removemos o deslogar daqui)
+import { logar } from "../app/actions"; 
 
 export default function AuthButton() {
   const { data: session } = useSession();
@@ -21,21 +22,19 @@ export default function AuthButton() {
           <p className="font-bold text-white leading-none">{session.user.name}</p>
         </div>
         
-        <form action={deslogar}>
-          <button 
-            type="submit" 
-            className="text-xs font-bold text-slate-400 hover:text-red-400 ml-2 transition-colors cursor-pointer"
-          >
-            Sair
-          </button>
-        </form>
+        {/* 3. Trocamos o form por um botão simples com onClick chamando o signOut */}
+        <button 
+          onClick={() => signOut()} 
+          className="text-xs font-bold text-slate-400 hover:text-red-400 ml-2 transition-colors cursor-pointer"
+        >
+          Sair
+        </button>
       </div>
     );
   }
 
   // SE NÃO ESTIVER LOGADO:
   return (
-    // Agora o login também usa um formulário chamando o servidor!
     <form action={logar}>
       <button 
         type="submit" 
