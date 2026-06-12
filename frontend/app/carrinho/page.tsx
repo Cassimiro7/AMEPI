@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+// Importamos a nova função que salva o pedido
+import { finalizarPedido } from '@/app/actions';
 
 export default function CarrinhoPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
@@ -13,6 +15,10 @@ export default function CarrinhoPage() {
   const [endereco, setEndereco] = useState<string | null>(null);
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [erroFrete, setErroFrete] = useState('');
+  
+  // Estados para o checkout
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pedidoSucesso, setPedidoSucesso] = useState(false);
 
   // Cálculos financeiros
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -30,7 +36,6 @@ export default function CarrinhoPage() {
     setEndereco(null);
 
     try {
-      // Usando a BrasilAPI para buscar os dados reais do CEP
       const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep.replace(/\D/g, '')}`);
       
       if (!response.ok) {
@@ -39,17 +44,15 @@ export default function CarrinhoPage() {
 
       const data = await response.json();
       
-      // Simulação de regras de negócio B2B para o valor do frete
       let valorSimulado = 0;
       if (data.state === 'SP' || data.state === 'RJ' || data.state === 'MG') {
-        valorSimulado = 35.50; // Sudeste
+        valorSimulado = 35.50; 
       } else if (data.state === 'CE' || data.state === 'PE' || data.state === 'BA') {
-        valorSimulado = 15.00; // Nordeste (Mais barato, simulando armazém local)
+        valorSimulado = 15.00; 
       } else {
-        valorSimulado = 55.90; // Restante do Brasil
+        valorSimulado = 55.90; 
       }
 
-      // Se o subtotal for maior que R$ 1000, frete grátis
       if (subtotal > 1000) {
         valorSimulado = 0;
       }
@@ -64,6 +67,54 @@ export default function CarrinhoPage() {
       setLoadingFrete(false);
     }
   };
+
+  // FUNÇÃO NOVA: Envia os dados para o MongoDB
+  const handleCheckout = async () => {
+    if (!endereco) {
+      alert("Por favor, calcule o frete antes de fechar o pedido.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    const dadosDoPedido = {
+      items: cart,
+      subtotal,
+      frete,
+      total,
+      cep,
+      endereco
+    };
+
+    const resultado = await finalizarPedido(dadosDoPedido);
+
+    if (resultado.sucesso) {
+      setPedidoSucesso(true);
+      // Dica: Aqui você pode adicionar um clearCart() no seu CartContext depois!
+    } else {
+      alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
+    }
+    
+    setIsSubmitting(false);
+  };
+
+  // Se o pedido deu certo, mostra a tela de sucesso!
+  if (pedidoSucesso) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-lg border-t-8 border-green-500">
+          <span className="text-6xl mb-4 block">✅</span>
+          <h1 className="text-3xl font-black text-slate-900 mb-2">Pedido Emitido!</h1>
+          <p className="text-slate-600 font-medium mb-8">
+            Seu lote de suprimentos foi registrado com sucesso em nosso sistema e será despachado para: <strong>{endereco}</strong>.
+          </p>
+          <Link href="/" className="bg-orange-500 hover:bg-orange-400 text-slate-950 font-black px-8 py-4 rounded-xl transition-all shadow-lg shadow-orange-500/20 uppercase tracking-widest text-sm">
+            Voltar ao Catálogo
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans pb-20">
@@ -208,11 +259,17 @@ export default function CarrinhoPage() {
             </div>
 
             <button 
-              disabled={cart.length === 0}
-              className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-slate-700 disabled:text-slate-500 active:scale-95 text-slate-950 font-black py-4 rounded-xl text-sm uppercase tracking-widest transition-all shadow-lg shadow-orange-500/20"
+              onClick={handleCheckout}
+              disabled={cart.length === 0 || isSubmitting}
+              className="w-full flex items-center justify-center bg-orange-500 hover:bg-orange-600 disabled:bg-slate-700 disabled:text-slate-500 active:scale-95 text-slate-950 font-black py-4 rounded-xl text-sm uppercase tracking-widest transition-all shadow-lg shadow-orange-500/20 mb-4"
             >
-              Emitir Pedido de Compra
+              {isSubmitting ? (
+                <span className="animate-pulse">Processando...</span>
+              ) : (
+                "Emitir Pedido de Compra"
+              )}
             </button>
+
           </div>
         </div>
 
