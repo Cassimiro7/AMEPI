@@ -20,4 +20,5 @@ export default async function Home() {
 
   // 4. Renderiza a interface que construímos, passando os dados do banco!
   return <HomeClient products={produtosFormatados} />;
+  
 }
