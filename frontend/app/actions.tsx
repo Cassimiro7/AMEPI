@@ -12,9 +12,6 @@ import { signIn, signOut, auth } from "../auth";
 import { Resend } from 'resend';
 import { EmailTemplate } from "@/components/EmailTemplate";
 
-// Inicializa o Resend com a chave do seu .env.local
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function deslogar() {
   await signOut({ redirectTo: "/" });
 }
@@ -45,6 +42,9 @@ export async function popularBancoDeDados() {
 // FUNÇÃO PRINCIPAL: Salva o pedido feito no carrinho E envia o e-mail detalhado
 export async function finalizarPedido(dadosPedido: any) {
   try {
+    // 👇 MOVIDO PARA CÁ: Inicializa o Resend dentro da função para garantir a leitura da chave na AWS
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     await dbConnect(); 
 
     // 1. PEGA A SESSÃO DO USUÁRIO LOGADO
