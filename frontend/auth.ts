@@ -2,7 +2,12 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
-  // 👇 É ESTA LINHA QUE VAI DESTRAVAR O SEU LOGIN NA AWS
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
+  ],
   trustHost: true,
+  secret: process.env.AUTH_SECRET,
 })
