@@ -1,12 +1,20 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { products } from '../../../data/products';
 import BuyBoxButtons from '../../../components/BuyBoxButtons';
 
+// 👇 Novas importações para o banco de dados (ajuste os caminhos se suas pastas tiverem nomes diferentes)
+import dbConnect from '../../../lib/mongodb';
+import Product from '../../../models/Product'; 
+
 export default async function ProdutoPage({ params }: { params: Promise<{ id: string }> }) {
-  
   const resolvedParams = await params;
-  const product = products.find(p => p.id === parseInt(resolvedParams.id));
+  
+  // 1. Conecta ao banco de dados MongoDB
+  await dbConnect();
+
+  // 2. Busca o produto direto do banco usando o ID da URL
+  // Usamos .lean() para que o MongoDB retorne um objeto JavaScript puro (necessário no Next.js)
+  const product = await Product.findOne({ id: parseInt(resolvedParams.id) }).lean();
 
   if (!product) {
     notFound();
@@ -137,7 +145,8 @@ export default async function ProdutoPage({ params }: { params: Promise<{ id: st
                 <p>🛡 **Seguro total** contra avarias logísticas incluso.</p>
               </div>
 
-              <BuyBoxButtons product={product} />
+              {/* Passando o produto convertido para o componente Client-Side */}
+              <BuyBoxButtons product={JSON.parse(JSON.stringify(product))} />
             </div>
           </div>
 

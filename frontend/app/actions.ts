@@ -1,6 +1,7 @@
 'use server';
 
-import { connectToDatabase } from "@/lib/mongodb";
+// 👇 1. Importação atualizada para dbConnect (sem chaves)
+import dbConnect from "@/lib/mongodb"; 
 import Product from "@/models/Product";
 import { products } from "@/data/products";
 import Order from "@/models/Order";
@@ -19,7 +20,8 @@ export async function logar() {
 
 export async function popularBancoDeDados() {
   try {
-    await connectToDatabase();
+    // 👇 2. Chamada da função atualizada
+    await dbConnect(); 
     
     // Apaga os produtos antigos para não duplicar (opcional)
     await Product.deleteMany({});
@@ -38,7 +40,8 @@ export async function popularBancoDeDados() {
 // NOVA FUNÇÃO: Salva o pedido feito no carrinho
 export async function finalizarPedido(dadosPedido: any) {
   try {
-    await connectToDatabase();
+    // 👇 3. Chamada da função atualizada aqui também
+    await dbConnect(); 
     
     // Cria o pedido no MongoDB Atlas
     const novoPedido = await Order.create(dadosPedido);

@@ -1,4 +1,5 @@
-import { connectToDatabase } from "@/lib/mongodb";
+// 👇 1. Mudamos a importação para o novo nome e tiramos as chaves { }
+import dbConnect from "@/lib/mongodb"; 
 import Product from "@/models/Product";
 import HomeClient from "../components/HomeClient";
 
@@ -6,8 +7,8 @@ import HomeClient from "../components/HomeClient";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  // 1. Conecta no banco de dados
-  await connectToDatabase();
+  // 👇 2. Mudamos a chamada da função para o novo nome
+  await dbConnect(); 
 
   // 2. Busca todos os produtos do MongoDB e converte para JSON
   const produtosDoBanco = await Product.find({}).lean();

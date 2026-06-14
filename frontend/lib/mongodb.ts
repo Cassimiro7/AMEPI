@@ -13,7 +13,8 @@ if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null };
 }
 
-export async function connectToDatabase() {
+// 👇 CORREÇÃO AQUI: adicionado o "default" e o nome mudou para "dbConnect"
+export default async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
