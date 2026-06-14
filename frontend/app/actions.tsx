@@ -105,4 +105,4 @@ export async function finalizarPedido(dadosPedido: any) {
     console.error("❌ Erro ao salvar pedido:", error);
     return { sucesso: false };
   }
-} 
+}
